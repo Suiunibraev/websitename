@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christmas Card Preorder</title>
+</head>
+<body>
+    <h1>Christmas Card Preorder</h1>
+    <form id="preorderForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+        <br>
+        <input type="submit" value="Preorder">
+    </form>
+
+    <script>
+        document.getElementById('preorderForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            addToGoogleSheet(name);
+        });
+
+        async function addToGoogleSheet(name) {
+            const apiKey = 'AIzaSyBudd_n_sW6rNSKcFPNjj5Jd1QLx4UU18Q';
+            const sheetId = '1eBwS3U56NflOcX-E_mm8wj_9Ut1bRoSsrzn1vVcYflQ';
+            const range = 'Sheet1!A:B';
+
+            const values = [[name, new Date().toLocaleString()]];
+
+            try {
+                const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?valueInputOption=USER_ENTERED&key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ values }),
+                });
+
+                if (response.ok) {
+                    alert('Preorder successful!');
+                } else {
+                    alert('Error adding preorder to Google Sheet');
+                }
+            } catch (error) {
+                console.error('Error adding preorder to Google Sheet', error);
+            }
+        }
+    </script>
+</body>
+</html>
